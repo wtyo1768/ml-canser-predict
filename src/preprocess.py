@@ -4,12 +4,12 @@ import numpy as np
 from cv2 import cv2 as cv2
 import os
 
-def get_File(file_dir):
+def get_File():
     image_list = []
     label_list = []
     df = pd.read_csv('./data/label/train_labels.csv')
     for idx, row in df.iterrows():
-        img_path = file_dir + row['id'] +'.tif'
+        img_path = row['id'] +'.tif'
         image_list.append(img_path)
         label_list.append(row['label'])
     return image_list, label_list
@@ -24,11 +24,12 @@ def bytes_feature(value):
 def convert_to_TFRecord(images, filename, labels ):
     n_samples = len(images)
     TFWriter = tf.python_io.TFRecordWriter(filename)
-    print('\nTransform start...')
+    print('\nTransform to TfRecords...')
     for i in np.arange(0, n_samples):
-        name = images[i].split('/')[3].split('.')[0]
+        name = images[i].split('.')[0]
+        fname = './data/train_data/' + images[i]
         try:
-            image = cv2.imread(images[i], 0)
+            image = cv2.imread(fname, 0)
             image_raw = image.tostring()
             name = str.encode(name)
             ftrs = tf.train.Features(
@@ -47,5 +48,5 @@ def convert_to_TFRecord(images, filename, labels ):
 import pandas as pd
 
 if '__main__' == __name__:
-    image_list , label_list = get_File('./data/train_data/')
+    image_list , label_list = get_File()
     convert_to_TFRecord(image_list , './data/Train.tfrecords' , label_list)

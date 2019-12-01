@@ -2,6 +2,10 @@ bin
 include
 lib
 share
+tcl
+Scripts
+lib
+.ropeproject
 
 data
 feature
